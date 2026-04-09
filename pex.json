@@ -1,0 +1,454 @@
+{
+  "name": "pex",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "months",
+              "triggerAtDayOfMonth": 5,
+              "triggerAtHour": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1440,
+        -208
+      ],
+      "id": "f285bd9c-14ac-43c1-bee2-ede6ab5dac60",
+      "name": "TRIGGER_PAYMENT"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "table": {
+          "__rl": true,
+          "value": "users",
+          "mode": "list",
+          "cachedResultName": "users"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        -1232,
+        -208
+      ],
+      "id": "e4126db1-0db9-46a4-a674-916e6bf482e4",
+      "name": "SET_DATABASE",
+      "credentials": {
+        "mySql": {
+          "id": "Kum9puds9voksaCm",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1008,
+        -208
+      ],
+      "id": "30961e3f-1f55-4c91-ad39-0b183c57661b",
+      "name": "LOOP_ITEMS"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b5c95a37-7def-492c-8680-8520a5e9ec73",
+              "leftValue": "={{ $json.status}}",
+              "rightValue": "Ativo",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -832,
+        32
+      ],
+      "id": "dac84d26-8754-4b4f-ae72-74be76a96cc1",
+      "name": "IF_STATUS_CLIENT"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e68db048-472e-4a24-821c-4fca789999e9",
+              "leftValue": "={{ $json.customer_id }}",
+              "rightValue": "^cus_",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -608,
+        16
+      ],
+      "id": "3da0ca7f-d455-421f-af5e-08a8d6bd0d14",
+      "name": "VERIFICATION_CUSTOMERID"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e4e67031-4922-4e40-a67c-57bc372717be",
+              "name": "id",
+              "value": "={{ $('VERIFICATION_CUSTOMERID').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "7d0bcd2a-38ef-4d62-8b08-76c8cbe0add8",
+              "name": "name",
+              "value": "={{ $('VERIFICATION_CUSTOMERID').item.json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "b15eb9f6-56dc-493e-b72f-6a4eaf65f562",
+              "name": "email",
+              "value": "={{ $('VERIFICATION_CUSTOMERID').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "f4e51e76-00ed-46f3-92c1-6f3584d59f47",
+              "name": "telefone",
+              "value": "={{ $('VERIFICATION_CUSTOMERID').item.json.telefone }}",
+              "type": "string"
+            },
+            {
+              "id": "b0399b56-0925-4aaa-80b5-187a58ec32f9",
+              "name": "cpf_cnpj",
+              "value": "={{ $('VERIFICATION_CUSTOMERID').item.json.cpf_cnpj }}",
+              "type": "string"
+            },
+            {
+              "id": "8fe8350e-f3b9-4987-815d-43591ea62fe1",
+              "name": "valor",
+              "value": "={{ $('VERIFICATION_CUSTOMERID').item.json.valor }}",
+              "type": "string"
+            },
+            {
+              "id": "e8c1746d-9faf-43e2-bebe-6060ef301387",
+              "name": "vencimento",
+              "value": "={{ $('VERIFICATION_CUSTOMERID').item.json.vencimento }}",
+              "type": "string"
+            },
+            {
+              "id": "80a32937-fa09-462b-8877-621f85ba6ea4",
+              "name": "customer_id",
+              "value": "={{ $if($('CREATE_CUSTOMER').isExecuted, $('CREATE_CUSTOMER').item.json.id, $('VERIFICATION_CUSTOMERID').item.json.customer_id) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -400,
+        -256
+      ],
+      "id": "2a1258f8-5c53-4765-9403-badb598daa7a",
+      "name": "PAYMENT_DATA",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const limparValor = (valor) => {\n    if (valor === null || valor === undefined) return '';\n    return String(valor).trim().replace(/^=+/, '');\n  };\n\n  const vencimentoOriginal = limparValor(item.json.vencimento ?? item.json.vencimento_asaas);\n  const identificacao = limparValor(item.json.nome || item.json.name || item.json.email || 'sem identificação');\n\n  if (!vencimentoOriginal) {\n    throw new Error('O campo vencimento está vazio ou indefinido para o utilizador: ' + identificacao);\n  }\n\n  function extrairDia(valor) {\n    if (/^\\d{4}-\\d{2}-\\d{2}$/.test(valor)) {\n      return Number(valor.split('-')[2]);\n    }\n\n    if (/^\\d{2}\\/\\d{2}\\/\\d{4}$/.test(valor)) {\n      return Number(valor.split('/')[0]);\n    }\n\n    if (/^\\d{1,2}$/.test(valor)) {\n      return Number(valor);\n    }\n\n    throw new Error(`Formato de vencimento inválido para ${identificacao}: ${valor}`);\n  }\n\n  const dia = extrairDia(vencimentoOriginal);\n\n  const hoje = new Date();\n  const ano = hoje.getFullYear();\n  const mes = hoje.getMonth();\n\n  let novoVencimento = new Date(ano, mes, dia);\n\n  if (novoVencimento < hoje) {\n    novoVencimento = new Date(ano, mes + 1, dia);\n  }\n\n  return {\n    json: {\n      ...item.json,\n      vencimento_asaas: novoVencimento.toISOString().split('T')[0]\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -112,
+        -256
+      ],
+      "id": "4bb9e9bd-e332-4b8e-93b0-9c6be6ee9984",
+      "name": "CALCULATE_DUEDATE"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sandbox.asaas.com/api/v3/customers",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "$aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OmFiYmI1ZWY3LTUzODMtNDQ2Ni1hZjY5LTZmMjQ2MTFjYmFiZjo6JGFhY2hfMDYzMDRmMGYtNmZjYy00NGYxLThlMjQtMGNkYTUxYTUyMjA0"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{ $json.name}}\",\n  \"email\": \"{{ $json.email }}\",\n  \"phone\": \"{{ $json.telefone }}\",\n  \"cpfCnpj\": \"{{ $json.cpf_cnpj }}\"\n}\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -336,
+        32
+      ],
+      "id": "0f5641ce-7273-4469-ad94-dca315c8fdc5",
+      "name": "CREATE_CUSTOMER",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sandbox.asaas.com/api/v3/payments",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "$aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OmFiYmI1ZWY3LTUzODMtNDQ2Ni1hZjY5LTZmMjQ2MTFjYmFiZjo6JGFhY2hfMDYzMDRmMGYtNmZjYy00NGYxLThlMjQtMGNkYTUxYTUyMjA0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "customer",
+              "value": "={{ $json.customer_id }}"
+            },
+            {
+              "name": "billingType",
+              "value": "BOLETO"
+            },
+            {
+              "name": "dueDate",
+              "value": "={{ $json.vencimento_asaas || $json.vencimento }}"
+            },
+            {
+              "name": "value",
+              "value": "={{ Number($json.valor) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        128,
+        -256
+      ],
+      "id": "96fd045f-ba50-479c-b314-70040ca48aa5",
+      "name": "CREATE_PAYMENT"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE users\nSET customer_id = '{{ String($json.id).replace(/'/g, \"\\\\'\") }}'\nWHERE id = {{ Number($('IF_STATUS_CLIENT').item.json.id) }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        128,
+        32
+      ],
+      "id": "d683a8c8-2bd8-42aa-9886-e8a35f67dcf8",
+      "name": "UPDATE_DATABASE",
+      "credentials": {
+        "mySql": {
+          "id": "Kum9puds9voksaCm",
+          "name": "MySQL account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "TRIGGER_PAYMENT": {
+      "main": [
+        [
+          {
+            "node": "SET_DATABASE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SET_DATABASE": {
+      "main": [
+        [
+          {
+            "node": "LOOP_ITEMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LOOP_ITEMS": {
+      "main": [
+        [],
+        [
+          {
+            "node": "IF_STATUS_CLIENT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF_STATUS_CLIENT": {
+      "main": [
+        [
+          {
+            "node": "VERIFICATION_CUSTOMERID",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "LOOP_ITEMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VERIFICATION_CUSTOMERID": {
+      "main": [
+        [
+          {
+            "node": "PAYMENT_DATA",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "CREATE_CUSTOMER",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PAYMENT_DATA": {
+      "main": [
+        [
+          {
+            "node": "CALCULATE_DUEDATE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CALCULATE_DUEDATE": {
+      "main": [
+        [
+          {
+            "node": "CREATE_PAYMENT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CREATE_CUSTOMER": {
+      "main": [
+        [
+          {
+            "node": "UPDATE_DATABASE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CREATE_PAYMENT": {
+      "main": [
+        [
+          {
+            "node": "LOOP_ITEMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UPDATE_DATABASE": {
+      "main": [
+        [
+          {
+            "node": "PAYMENT_DATA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e4ef6690-fff0-48d1-bbfa-f13418561a5f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "495326150298f97d90244c83cb2d0e01c29eaa2f5b8074df1bf7a95940d0cd71"
+  },
+  "id": "4BDdDYYFUcXTPL1s",
+  "tags": []
+}
