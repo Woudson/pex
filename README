@@ -6,11 +6,10 @@ This project implements an **automated billing system** using cloud infrastructu
 
 It retrieves users from a database, validates their status, creates customers (if needed), and generates recurring payments via an external payment API.
 
----
+
 
 ## 🏗️ Architecture
 
-```text
 AWS EC2 (Docker + n8n)
         ↓
      MySQL (RDS)
@@ -20,43 +19,42 @@ AWS EC2 (Docker + n8n)
      Asaas API
         ↓
  Payment Generation (Boleto)
-```
 
----
+
 
 ## ⚙️ Tech Stack
 
-* **AWS EC2** – Application hosting
-* **Docker** – Containerization of n8n
-* **n8n** – Workflow automation
-* **MySQL (RDS + EC2)** – Database
-* **JavaScript** – Data processing inside n8n
-* **Asaas API** – Payment processing
+* AWS EC2 – Application hosting
+* Docker – Containerization of n8n
+* n8n – Workflow automation
+* MySQL (RDS + EC2) – Database
+* JavaScript – Data processing inside n8n
+* Asaas API – Payment processing
 
----
 
-## 🔄 Workflow Description
 
-### 1. Scheduled Execution
+# 🔄 Workflow Description
+
+# 1. Scheduled Execution
 
 * Runs monthly (day 5 at 12:00)
 
-### 2. Data Retrieval
+# 2. Data Retrieval
 
 * Fetches all users from MySQL database
 
-### 3. Processing Logic
+# 3. Processing Logic
 
 * Iterates through users
-* Filters only **active clients**
+* Filters only active clients
 * Checks if `customer_id` exists
 
-### 4. Customer Handling
+# 4. Customer Handling
 
 * If customer exists → proceed
 * If not → create customer via API
 
-### 5. Due Date Calculation
+# 5. Due Date Calculation
 
 * Supports multiple formats:
 
@@ -65,17 +63,17 @@ AWS EC2 (Docker + n8n)
   * Day only (`DD`)
 * Adjusts to next valid billing date
 
-### 6. Payment Creation
+# 6. Payment Creation
 
 * Generates boleto payment using API
 
-### 7. Database Update
+# 7. Database Update
 
 * Stores `customer_id` after creation
 
----
 
-## 🧠 Key Features
+
+# 🧠 Key Features
 
 * ✅ Automated billing workflow
 * ✅ Conditional logic (active users only)
@@ -85,31 +83,9 @@ AWS EC2 (Docker + n8n)
 * ✅ Batch processing (scalable)
 * ✅ Data validation and sanitization
 
----
 
-## 🔐 Security Considerations
 
-> ⚠️ Current implementation uses API token inside workflow
-
-**Recommended improvements:**
-
-* Use environment variables
-* Use n8n credential manager
-* Restrict API permissions
-
----
-
-## 🚀 Improvements (Next Steps)
-
-* [ ] Add retry mechanism for API failures
-* [ ] Implement logging (CloudWatch or external)
-* [ ] Add support for PIX / credit card
-* [ ] Centralize database (remove local MySQL)
-* [ ] Add monitoring dashboard
-
----
-
-## 💼 What I Learned
+# 💼 What I Learned
 
 * Cloud infrastructure provisioning (AWS)
 * Containerized applications (Docker)
@@ -118,9 +94,9 @@ AWS EC2 (Docker + n8n)
 * Data transformation with JavaScript
 * Backend logic and system orchestration
 
----
 
-## 📊 Business Value
+
+# 📊 Business Value
 
 This system enables:
 
@@ -129,34 +105,28 @@ This system enables:
 * Scalable payment processing
 * Integration-ready architecture
 
----
 
-## 📎 Project Structure
+# 📎 Project Structure
 
-```text
 .
-├── n8n-workflow.json
-├── docker-compose.yml
+├── pex.json
+├── doc
+├── img
 ├── README.md
-```
-
----
 
 ## 🔗 API Reference
 
 * Asaas API: [https://asaas.com/docs/api](https://asaas.com/docs/api)
 
----
 
 ## 🏁 Conclusion
 
-This project demonstrates the ability to design and implement a **real-world automation system**, combining:
+This project demonstrates the ability to design and implement a real-world automation system, combining:
 
 * Cloud infrastructure
 * Backend logic
 * API integrations
 * Workflow orchestration
 
----
 
 # ⭐ If you liked this project, feel free to star the repo!
