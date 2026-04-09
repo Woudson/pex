@@ -1,47 +1,162 @@
-REPOSITORIO CONTENDO OS PROJETOS SEMESTRAIS REFERENTE AO PEX;
+# 🚀 Automated Billing System (AWS + n8n + MySQL)
 
-EM CADA PROJETO ESTARÁ O NOME, EMAIL E LINKEDIN DE CADA MEMBRO.
+## 📌 Overview
 
-CADA MEMBRO POSSUI UM FUNÇÃO EXTREMAMENTE VITAL PARA O FUNCIONAMENTO DO PROJETO.
+This project implements an **automated billing system** using cloud infrastructure and workflow orchestration.
 
-ABAIXO ESTA A CONTRIBUIÇÃO DE CADA INTEGRANTE:
+It retrieves users from a database, validates their status, creates customers (if needed), and generates recurring payments via an external payment API.
 
-WOUDSON PASSOS: 
-Deploy de ambiente cloud utilizando AWS EC2 + Docker
-Implementação de base de dados MySQL (RDS + EC2)
-Desenvolvimento de workflow automatizado com n8n
-Integração com API de pagamentos (Asaas)
-Implementação de lógica de negócio:
-Validação de clientes
-Criação dinâmica de entidades
-Geração de cobranças recorrentes
-Manipulação e transformação de dados com JavaScript
-Orquestração completa entre base de dados e serviços externos
+---
 
-NATAN ARROYO:
+## 🏗️ Architecture
 
+```text
+AWS EC2 (Docker + n8n)
+        ↓
+     MySQL (RDS)
+        ↓
+     Workflow (n8n)
+        ↓
+     Asaas API
+        ↓
+ Payment Generation (Boleto)
+```
 
+---
 
+## ⚙️ Tech Stack
 
-LEANDRO GAMA:
+* **AWS EC2** – Application hosting
+* **Docker** – Containerization of n8n
+* **n8n** – Workflow automation
+* **MySQL (RDS + EC2)** – Database
+* **JavaScript** – Data processing inside n8n
+* **Asaas API** – Payment processing
 
+---
 
+## 🔄 Workflow Description
 
-lUCAS QUEIROZ:
+### 1. Scheduled Execution
 
+* Runs monthly (day 5 at 12:00)
 
+### 2. Data Retrieval
 
-FERNANDO VILELA:
+* Fetches all users from MySQL database
 
+### 3. Processing Logic
 
+* Iterates through users
+* Filters only **active clients**
+* Checks if `customer_id` exists
 
-MARIA EDUARDA:
+### 4. Customer Handling
 
+* If customer exists → proceed
+* If not → create customer via API
 
+### 5. Due Date Calculation
 
+* Supports multiple formats:
 
-JOÃO MANUEL:
+  * `YYYY-MM-DD`
+  * `DD/MM/YYYY`
+  * Day only (`DD`)
+* Adjusts to next valid billing date
 
+### 6. Payment Creation
 
+* Generates boleto payment using API
 
+### 7. Database Update
 
+* Stores `customer_id` after creation
+
+---
+
+## 🧠 Key Features
+
+* ✅ Automated billing workflow
+* ✅ Conditional logic (active users only)
+* ✅ Idempotent customer creation
+* ✅ Dynamic date calculation
+* ✅ API integration (REST)
+* ✅ Batch processing (scalable)
+* ✅ Data validation and sanitization
+
+---
+
+## 🔐 Security Considerations
+
+> ⚠️ Current implementation uses API token inside workflow
+
+**Recommended improvements:**
+
+* Use environment variables
+* Use n8n credential manager
+* Restrict API permissions
+
+---
+
+## 🚀 Improvements (Next Steps)
+
+* [ ] Add retry mechanism for API failures
+* [ ] Implement logging (CloudWatch or external)
+* [ ] Add support for PIX / credit card
+* [ ] Centralize database (remove local MySQL)
+* [ ] Add monitoring dashboard
+
+---
+
+## 💼 What I Learned
+
+* Cloud infrastructure provisioning (AWS)
+* Containerized applications (Docker)
+* Workflow automation (n8n)
+* REST API integration
+* Data transformation with JavaScript
+* Backend logic and system orchestration
+
+---
+
+## 📊 Business Value
+
+This system enables:
+
+* Automated recurring billing
+* Reduced manual operations
+* Scalable payment processing
+* Integration-ready architecture
+
+---
+
+## 📎 Project Structure
+
+```text
+.
+├── n8n-workflow.json
+├── docker-compose.yml
+├── README.md
+```
+
+---
+
+## 🔗 API Reference
+
+* Asaas API: [https://asaas.com/docs/api](https://asaas.com/docs/api)
+
+---
+
+## 🏁 Conclusion
+
+This project demonstrates the ability to design and implement a **real-world automation system**, combining:
+
+* Cloud infrastructure
+* Backend logic
+* API integrations
+* Workflow orchestration
+
+---
+
+# ⭐ If you liked this project, feel free to star the repo!
